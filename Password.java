@@ -16,19 +16,20 @@ public class Password {
             {14, 15}
         };
 
-        // Difficulty selection and loading list of passwords
+        // difficulty selection
         out.print("\nDifficulty (1-5): ");
         int diff = kb.nextInt();
         int[] opts = difficulty[diff - 1];
 
-        // Seperate random values for length of words and number of words
-        int rLen = (int)Math.floor(Math.random() * opts.length);
-        int rNum = (int)Math.floor(Math.random() * opts.length);
-        // Passes opts[rNum] as the second arg unless it is 4, in which case it passes 5
+        // generate seperate random values for length of words and number of words
+        int rLen = (int) Math.floor(Math.random() * opts.length);
+        int rNum = (int) Math.floor(Math.random() * opts.length);
+
+        // pass opts[rNum] as the second arg unless it is 4, in which case pass 5
         String[] possible = getWords(opts[rLen], opts[rNum] == 4 ? 5 : opts[rNum]);
         
-        // Choosing a random password
-        String pswd = possible[(int)Math.floor(Math.random() * possible.length)];
+        // choose random password
+        String pswd = possible[(int) Math.floor(Math.random() * possible.length)];
 
         out.println();
         for (String s : possible) out.println(s);
@@ -39,12 +40,11 @@ public class Password {
         while (guesses > 0) {
             out.print("Guess (" + guesses + " left)? ");
             String g = kb.nextLine().toUpperCase();
-            if (g.equals(pswd)) {
-                break;
-            } else {
-                out.println(guess(g, pswd) + "/" + pswd.length() + " correct");
-                guesses--;
-            }
+
+            if (g.equals(pswd)) break;
+
+            out.println(guess(g, pswd) + "/" + pswd.length() + " correct");
+            guesses--;
         }
 
         if (guesses > 0) out.println("You win!");
@@ -57,7 +57,7 @@ public class Password {
     static String[] getWords(int len, int amt) throws IOException {
         Scanner dict = new Scanner(new File("D:\\java\\resources\\input\\enable1.txt"));
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         String[] words = new String[amt];
 
         while (dict.hasNextLine()) {
