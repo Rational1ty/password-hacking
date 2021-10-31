@@ -1,8 +1,8 @@
 # Password Hacking
 
-A simple password hacking game
+A simple password hacking game.
 
-### Usage
+## Usage
 
 ```
 $ javac Password.java
