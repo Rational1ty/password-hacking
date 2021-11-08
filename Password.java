@@ -1,12 +1,17 @@
 import static java.lang.System.out;
-import java.util.Scanner;
-import java.util.ArrayList;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
-import java.io.*;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Random;
 
 public class Password {
     public static void main(String[] args) throws IOException {
         Scanner kb = new Scanner(System.in);
+        Random rd = new Random();
 
         int[][] difficulty = {
             {4, 5},
@@ -22,55 +27,54 @@ public class Password {
         int[] opts = difficulty[diff - 1];
 
         // generate seperate random values for length of words and number of words
-        int rLen = (int) Math.floor(Math.random() * opts.length);
-        int rNum = (int) Math.floor(Math.random() * opts.length);
+        int rlen = rd.nextInt(opts.length);
+        int rnum = rd.nextInt(opts.length);
 
         // pass opts[rNum] as the second arg unless it is 4, in which case pass 5
-        String[] possible = getWords(opts[rLen], opts[rNum] == 4 ? 5 : opts[rNum]);
+        var possible = getWords(opts[rlen], opts[rnum] == 4 ? 5 : opts[rnum]);
         
         // choose random password
-        String pswd = possible[(int) Math.floor(Math.random() * possible.length)];
+        int randIndex = (int) Math.floor(Math.random() * possible.size());
+        String pswd = possible.get(randIndex);
 
         out.println();
-        for (String s : possible) out.println(s);
+
+        possible.forEach(out::println);
+        
         out.println();
         kb.nextLine();
 
         int guesses = 4;
         while (guesses > 0) {
-            out.print("Guess (" + guesses + " left)? ");
+            out.printf("Guess (%d left)? ", guesses);
             String g = kb.nextLine().toUpperCase();
 
             if (g.equals(pswd)) break;
 
-            out.println(guess(g, pswd) + "/" + pswd.length() + " correct");
+            out.printf("%d/%d correct%n", guess(g, pswd), pswd.length());
             guesses--;
         }
 
-        if (guesses > 0) out.println("You win!");
-        else out.println("You blew up! Correct password: " + pswd);
+        if (guesses > 0) 
+            out.println("You win!");
+        else
+            out.println("You blew up! Correct password: " + pswd);
 
         kb.close();
     }
 
-    // Returns an array of [amt] words that are all [len] characters long
-    static String[] getWords(int len, int amt) throws IOException {
-        Scanner dict = new Scanner(new File("D:\\java\\resources\\input\\enable1.txt"));
+    // Returns an list of [amt] words that are all [len] characters long
+    static List<String> getWords(int len, int amt) throws IOException {
+        var words = Files.readAllLines(Paths.get("C:\\users\\mdavi\\prog\\enable1.txt"));
 
-        ArrayList<String> list = new ArrayList<>();
-        String[] words = new String[amt];
+        words.removeIf(word -> word.length() != len);
 
-        while (dict.hasNextLine()) {
-            String word = dict.nextLine();
-            if (word.length() == len)
-                list.add(word);
-        }
+        Collections.shuffle(words);
 
-        Collections.shuffle(list);
-        for (int i = 0; i < amt; i++)
-            words[i] = list.get(i).toUpperCase();
-
-        return words;
+        return words.stream()
+            .map(String::toUpperCase)
+            .toList()
+            .subList(0, amt);
     }
 
     static int guess(String g, String ans) {
