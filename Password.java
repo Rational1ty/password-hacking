@@ -34,7 +34,7 @@ public class Password {
         var possible = getWords(opts[rlen], opts[rnum] == 4 ? 5 : opts[rnum]);
         
         // choose random password
-        int randIndex = (int) Math.floor(Math.random() * possible.size());
+        int randIndex = rd.nextInt(possible.size());
         String pswd = possible.get(randIndex);
 
         out.println();
@@ -55,10 +55,7 @@ public class Password {
             guesses--;
         }
 
-        if (guesses > 0) 
-            out.println("You win!");
-        else
-            out.println("You blew up! Correct password: " + pswd);
+        out.println(guesses > 0 ? "You win!" : ("You blew up! Correct password: " + pswd));
 
         kb.close();
     }
